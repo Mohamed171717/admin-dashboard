@@ -12,7 +12,7 @@ export default function UserManagement() {
   const [users, setUsers] = useState([]);
   const [books, setBooks] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const usersPerPage = 4;
+  const usersPerPage = 10;
 
   const [selectedUser, setSelectedUser] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -106,7 +106,7 @@ export default function UserManagement() {
           />
         </div>
         <div
-          className={`flex gap-2 justify-between flex-wrap xl:flex-nowrap sm:justify-center ${
+          className={`flex gap-4 justify-between flex-wrap sm:justify-center ${
             currentUsers > 3 && "lg:justify-between"
           }`}
         >

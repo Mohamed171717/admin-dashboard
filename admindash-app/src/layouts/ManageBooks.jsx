@@ -76,7 +76,7 @@ export default function ManageBooks() {
   });
   const [searchInput, setSearchInput] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const booksPerPage = 3;
+  const booksPerPage = 8;
 
   const fetchData = async () => {
     try {
@@ -197,7 +197,7 @@ export default function ManageBooks() {
 
       {/* Book Cards */}
       <div
-        className={`flex gap-17 flex-wrap justify-center xl:flex-nowrap  lg:justify-start ${
+        className={`flex gap-4 flex-wrap justify-center ${
           filteredBooks.length > 2 && "lg:justify-between"
         }`}
       >
