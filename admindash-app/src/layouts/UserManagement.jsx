@@ -106,9 +106,10 @@ export default function UserManagement() {
           />
         </div>
         <div
-          className={`flex gap-4 justify-between flex-wrap sm:justify-center ${
-            currentUsers > 3 && "lg:justify-between"
-          }`}
+          // className={`flex gap-4 justify-between flex-wrap sm:justify-center ${
+          //   currentUsers > 3 && "lg:justify-between"
+          // }`}
+          className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6 w-fit m-auto"
         >
           {currentUsers.map((user) => {
             const relatedBooks = books.filter(

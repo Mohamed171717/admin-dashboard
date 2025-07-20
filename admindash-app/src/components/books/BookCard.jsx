@@ -26,9 +26,9 @@ export default function BookCard({ book, user, changeApproval, deleteBook }) {
           className="w-32 h-44  rounded-md mb-3"
         />
 
-        <div className="text">
+        <div className="overflow-hidden">
           {/* Book Details */}
-          <h2 className="font-semibold text-lg text-[#4A4947] mb-1">
+          <h2 className="font-semibold text-lg text-[#4A4947] mb-1 text-ellipsis">
             {book.title}
           </h2>
           <p className="text-[#4A4947] text-sm mb-1">{book.author}</p>

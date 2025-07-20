@@ -197,9 +197,10 @@ export default function ManageBooks() {
 
       {/* Book Cards */}
       <div
-        className={`flex gap-4 flex-wrap justify-center ${
-          filteredBooks.length > 2 && "lg:justify-between"
-        }`}
+        // className={`flex gap-4 flex-wrap justify-center ${
+        //   filteredBooks.length > 2 && "lg:justify-between"
+        // }`}
+        className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6 w-fit m-auto"
       >
         {currentBooks.map((book) => {
           const user = users.find((user) => user.id === book.ownerId);

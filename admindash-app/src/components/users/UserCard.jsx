@@ -21,17 +21,19 @@ export default function UserCard({ user, books, fetchUsers, openModal }) {
   };
 
   return (
-    <div className="w-full border border-gray-200 rounded-lg p-6 sm:w-80 bg-white shadow-sm overflow-x-hidden">
+    <div className="border border-gray-200 rounded-lg p-6 min-w-55 max-w-100 bg-white shadow-sm overflow-x-hidden">
       {/* User Header */}
-      <div className="flex items-center gap-4 mb-4">
+      <div className="flex items-center gap-4 mb-4 w-full">
         <div className="avatar">
           <div className="w-12 rounded-full bg-gray-200">
             <img src={user.photoUrl} alt="" srcSet="" />
           </div>
         </div>
-        <div>
-          <h2 className="text-xl font-semibold text-neutral">{user.name}</h2>
-          <p className="text-neutral text-sm">{user.email}</p>
+        <div className="overflow-hidden">
+          <h2 className="text-xl font-semibold text-neutral text-ellipsis whitespace-nowrap">
+            {user.name}
+          </h2>
+          <p className="text-neutral text-sm text-ellipsis">{user.email}</p>
         </div>
       </div>
 
