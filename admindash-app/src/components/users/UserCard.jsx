@@ -27,7 +27,7 @@ export default function UserCard({ user, books, fetchUsers, openModal }) {
       viewBox="0 0 24 24"
       strokeWidth={1.1}
       stroke="#B17457"
-      className="size-6 w-12 h-12 rounded-full mx-auto mb-2 object-cover"
+      className="size-6 w-12 h-12 rounded-full mx-auto object-cover"
     >
       <path
         strokeLinecap="round"
