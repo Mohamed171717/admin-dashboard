@@ -20,14 +20,35 @@ export default function UserCard({ user, books, fetchUsers, openModal }) {
     }
   };
 
+  const userDefaultImage = (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      strokeWidth={1.1}
+      stroke="#B17457"
+      className="size-6 w-12 h-12 rounded-full mx-auto mb-2 object-cover"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+      />
+    </svg>
+  );
+
   return (
     <div className="border border-gray-200 rounded-lg p-6 min-w-55 max-w-100 bg-white shadow-sm overflow-x-hidden">
       {/* User Header */}
       <div className="flex items-center gap-4 mb-4 w-full">
         <div className="avatar">
-          <div className="w-12 rounded-full bg-gray-200">
-            <img src={user.photoUrl} alt="" srcSet="" />
-          </div>
+          {!user.photoUrl || user.photoUrl == "/user-default.jpg" ? (
+            userDefaultImage
+          ) : (
+            <div className="w-12 rounded-full bg-gray-200">
+              <img src={user.photoUrl} alt="" srcSet="" />
+            </div>
+          )}
         </div>
         <div className="overflow-hidden">
           <h2 className="text-xl font-semibold text-neutral text-ellipsis whitespace-nowrap">
@@ -56,7 +77,7 @@ export default function UserCard({ user, books, fetchUsers, openModal }) {
         </div> */}
         <div className="text-center text-neutral">
           <p className="text-xs">Rating</p>
-          <p className="font-semibold">{user.averageRating}</p>
+          <p className="font-semibold">{user.averageRating.toFixed(1)}</p>
         </div>
       </div>
 
