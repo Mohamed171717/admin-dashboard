@@ -1,22 +1,50 @@
-import { doc, updateDoc } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+  writeBatch,
+} from "firebase/firestore";
 import { db } from "../../lib/firebase";
 import { toast } from "react-toastify";
-// import { useEffect, useState } from "react";
 
 export default function UserCard({ user, books, fetchUsers, openModal }) {
-  // console.log(books);
   const toggleBanUser = async (userId, currentStatus) => {
     try {
       const userRef = doc(db, "users", userId);
       await updateDoc(userRef, {
         isBanned: !currentStatus,
       });
+      toggleIsDeltedBooks(userId, currentStatus);
       fetchUsers();
       toast.success(
-        `User ${!user.isBanned ? "Banned" : "Un Banned"} successfully`
+        `${user.name} ${!user.isBanned ? "Banned" : "Un Banned"} successfully`
       );
     } catch (error) {
       console.error("Error updating user ban status:", error);
+    }
+  };
+
+  const toggleIsDeltedBooks = async (userId, currentStatus) => {
+    try {
+      const booksQuery = query(
+        collection(db, "books"),
+        where("ownerId", "==", userId)
+      );
+      const booksSnapshot = await getDocs(booksQuery);
+      if (!booksSnapshot.empty) {
+        const batch = writeBatch(db);
+
+        booksSnapshot.forEach((bookDoc) => {
+          batch.update(bookDoc.ref, { isDeleted: !currentStatus });
+        });
+
+        await batch.commit();
+      }
+    } catch (error) {
+      console.error("Error updating user books status:", error);
     }
   };
 
@@ -106,7 +134,7 @@ export default function UserCard({ user, books, fetchUsers, openModal }) {
               d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
             />
           </svg>
-          View Profile
+          More Info
         </button>
         <button
           onClick={() => toggleBanUser(user.id, user.isBanned)}
