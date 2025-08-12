@@ -13,11 +13,6 @@ export default function TransactionStats({ data }) {
       icon: <FaExchangeAlt />,
     },
     {
-      label: "Pending Approvals",
-      value: data.pending || 0,
-      icon: <FaClock />,
-    },
-    {
       label: "Completed Today",
       value: data.completed || 0,
       icon: <FaCheckCircle />,
@@ -30,7 +25,7 @@ export default function TransactionStats({ data }) {
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
       {stats.map((stat, i) => (
         <div
           key={i}

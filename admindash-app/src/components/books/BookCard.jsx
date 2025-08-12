@@ -40,6 +40,8 @@ export default function BookCard({ book, user, changeApproval, deleteBook }) {
             <br />
             <span className="text-xs text-[#4A4947]">{user.email}</span>
           </p>
+          {/* book price */}
+          <p className="text-sm text-[#4A4947] mt-2">Price: {book.price} EGP</p>
         </div>
       </div>
 

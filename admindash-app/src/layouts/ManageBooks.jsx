@@ -73,6 +73,7 @@ export default function ManageBooks() {
   const [users, setUsers] = useState([]);
   const [filters, setFilters] = useState({
     search: "",
+    approval: "all",
   });
   const [searchInput, setSearchInput] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -110,7 +111,7 @@ export default function ManageBooks() {
     const handler = setTimeout(() => {
       setFilters((prev) => ({ ...prev, search: searchInput }));
       setCurrentPage(1);
-    }, 1000);
+    }, 600);
     return () => clearTimeout(handler);
   }, [searchInput]);
 
@@ -149,12 +150,24 @@ export default function ManageBooks() {
     }
   };
 
+  // const filteredBooks = books.filter((book) => {
+  //   const searchTerm = filters.search.toLowerCase();
+  //   const searchMatch =
+  //     book.title.toLowerCase().includes(searchTerm) ||
+  //     book.author.toLowerCase().includes(searchTerm);
+  //   return searchMatch;
+  // });
   const filteredBooks = books.filter((book) => {
     const searchTerm = filters.search.toLowerCase();
     const searchMatch =
       book.title.toLowerCase().includes(searchTerm) ||
       book.author.toLowerCase().includes(searchTerm);
-    return searchMatch;
+
+    const approvalMatch =
+      filters.approval === "all" ||
+      book.approval?.toLowerCase() === filters.approval;
+
+    return searchMatch && approvalMatch;
   });
 
   const totalPages = Math.ceil(filteredBooks.length / booksPerPage);
@@ -193,15 +206,24 @@ export default function ManageBooks() {
             onChange={(e) => setSearchInput(e.target.value)}
           />
         </div>
+
+        {/* filter approval */}
+        <select
+          value={filters.approval}
+          onChange={(e) =>
+            setFilters((prev) => ({ ...prev, approval: e.target.value }))
+          }
+          className="border border-secondary rounded-lg px-3 py-2 text-sm bg-white"
+        >
+          <option value="all">All</option>
+          <option value="approved">Approved</option>
+          <option value="pending">Pending</option>
+          <option value="rejected">Rejected</option>
+        </select>
       </div>
 
       {/* Book Cards */}
-      <div
-        // className={`flex gap-4 flex-wrap justify-center ${
-        //   filteredBooks.length > 2 && "lg:justify-between"
-        // }`}
-        className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6 w-fit m-auto"
-      >
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6 w-fit m-auto">
         {currentBooks.map((book) => {
           const user = users.find((user) => user.id === book.ownerId);
           if (!user) return null;
