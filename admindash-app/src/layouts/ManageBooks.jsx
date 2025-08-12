@@ -181,7 +181,7 @@ export default function ManageBooks() {
     <div>
       <h2 className="mb-4 text-neutral font-semibold">Manage Books</h2>
       {/* Filters */}
-      <div className="flex flex-wrap justify-start items-center gap-3 mb-4">
+      <div className="flex flex-wrap flex-col sm:flex-row justify-start  gap-3 mb-4">
         <div className="bg-white border-secondary border rounded-lg flex gap-2 pr-2 flex-2 min-w-3xs">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -207,13 +207,12 @@ export default function ManageBooks() {
           />
         </div>
 
-        {/* filter approval */}
         <select
           value={filters.approval}
           onChange={(e) =>
             setFilters((prev) => ({ ...prev, approval: e.target.value }))
           }
-          className="border border-secondary rounded-lg px-3 py-2 text-sm bg-white"
+          className="bg-[#FAF7F0] border border-[#D8D2C2] rounded-lg px-3 py-2 text-sm text-[#4A4947] shadow-sm focus:outline-none focus:ring-2 focus:ring-[#B17457] transition"
         >
           <option value="all">All</option>
           <option value="approved">Approved</option>
