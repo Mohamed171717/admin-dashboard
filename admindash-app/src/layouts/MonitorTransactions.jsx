@@ -12,6 +12,7 @@ import {
   onSnapshot,
   getDocs,
   Timestamp,
+  limitToLast,
 } from "firebase/firestore";
 import { db } from "../lib/firebase";
 
@@ -21,6 +22,7 @@ export default function MonitorTransactions() {
   const [pageInfo, setPageInfo] = useState({ firstDoc: null, lastDoc: null });
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [pageCursors, setPageCursors] = useState([]);
   const [totalTransactions, setTotalTransactions] = useState(0);
 
   const PAGE_SIZE = 10;
@@ -54,25 +56,27 @@ export default function MonitorTransactions() {
   };
 
   const fetchData = (direction = "initial") => {
-    let q = query(
-      collection(db, "orders"),
-      orderBy("createdAt", "desc"),
-      limit(PAGE_SIZE)
-    );
+    let q;
 
-    if (direction === "next" && pageInfo.lastDoc) {
+    if (direction === "initial") {
+      q = query(
+        collection(db, "orders"),
+        orderBy("createdAt", "desc"),
+        limit(PAGE_SIZE)
+      );
+    } else if (direction === "next") {
       q = query(
         collection(db, "orders"),
         orderBy("createdAt", "desc"),
         startAfter(pageInfo.lastDoc),
         limit(PAGE_SIZE)
       );
-    } else if (direction === "prev" && pageInfo.firstDoc) {
+    } else if (direction === "prev") {
       q = query(
         collection(db, "orders"),
         orderBy("createdAt", "desc"),
         endBefore(pageInfo.firstDoc),
-        limit(PAGE_SIZE)
+        limitToLast(PAGE_SIZE) // needed for backwards pagination
       );
     }
 
@@ -85,12 +89,17 @@ export default function MonitorTransactions() {
         }));
 
         setTransactions(data);
-        setPageInfo({
-          firstDoc: snapshot.docs[0],
-          lastDoc: snapshot.docs[snapshot.docs.length - 1],
-        });
-      } else {
-        setTransactions([]);
+
+        const firstDoc = snapshot.docs[0];
+        const lastDoc = snapshot.docs[snapshot.docs.length - 1];
+
+        setPageInfo({ firstDoc, lastDoc });
+
+        if (direction === "next") {
+          setPageCursors((prev) => [...prev, firstDoc]);
+        } else if (direction === "prev") {
+          setPageCursors((prev) => prev.slice(0, -1));
+        }
       }
     });
   };
@@ -137,7 +146,7 @@ export default function MonitorTransactions() {
         <button
           disabled={currentPage === 1}
           onClick={() => {
-            setCurrentPage((prev) => Math.max(1, prev - 1));
+            setCurrentPage((prev) => prev - 1);
             fetchData("prev");
           }}
           className="btn btn-xs rounded-lg py-4 px-3.5 text-sm bg-[#B17457] text-white hover:bg-[#9c604a] disabled:opacity-50"

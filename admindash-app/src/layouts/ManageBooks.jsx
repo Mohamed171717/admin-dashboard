@@ -8,6 +8,8 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { db } from "../lib/firebase";
+import { sendBookNotifications } from "../lib/sendNotifications";
+import { sendBookRejectedNotification } from "../lib/sendOwnerNotif";
 
 // const dummyBooks = [
 //   {
@@ -92,7 +94,7 @@ export default function ManageBooks() {
         };
       });
       setBooks(booksData);
-      console.log(booksData);
+      // console.log(booksData);
       // fetching users
       const querySnapshot2 = await getDocs(collection(db, "users"));
       const usersData = querySnapshot2.docs.map((doc) => ({
@@ -133,7 +135,14 @@ export default function ManageBooks() {
       await updateDoc(bookRef, {
         approval: action,
       });
-      console.log("Updated Firestore successfully");
+      if (action === "approved") {
+        await sendBookNotifications(book);
+        console.log("sendBookNotifications");
+      } else {
+        await sendBookRejectedNotification(book);
+        console.log("sendBookRejectedNotification");
+      }
+      console.log("Updated Firestore successfully", action);
     } catch (err) {
       console.error("Error updating approval:", err);
     }
@@ -150,13 +159,6 @@ export default function ManageBooks() {
     }
   };
 
-  // const filteredBooks = books.filter((book) => {
-  //   const searchTerm = filters.search.toLowerCase();
-  //   const searchMatch =
-  //     book.title.toLowerCase().includes(searchTerm) ||
-  //     book.author.toLowerCase().includes(searchTerm);
-  //   return searchMatch;
-  // });
   const filteredBooks = books.filter((book) => {
     const searchTerm = filters.search.toLowerCase();
     const searchMatch =
