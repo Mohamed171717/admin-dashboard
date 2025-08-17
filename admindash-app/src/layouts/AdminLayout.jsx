@@ -7,7 +7,7 @@ import MonitorTransactions from "./MonitorTransactions";
 export default function AdminLayout() {
   const [activePage, setActivePage] = useState(1);
   return (
-    <div className="px-8 py-4 bg-[#FAF7F0] min-h-lvh">
+    <div className="2xl:px-96 lg:px-48 py-4 bg-[#FAF7F0] min-h-lvh">
       <Header activePage={activePage} changeActivePage={setActivePage} />
       {activePage == 1 ? (
         <UserManagement />
