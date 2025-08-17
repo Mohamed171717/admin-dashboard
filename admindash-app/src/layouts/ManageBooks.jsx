@@ -8,6 +8,8 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { db } from "../lib/firebase";
+import { sendBookNotifications } from "../lib/sendNotifications";
+import { sendBookRejectedNotification } from "../lib/sendOwnerNotif";
 
 // const dummyBooks = [
 //   {
@@ -73,6 +75,7 @@ export default function ManageBooks() {
   const [users, setUsers] = useState([]);
   const [filters, setFilters] = useState({
     search: "",
+    approval: "all",
   });
   const [searchInput, setSearchInput] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -91,7 +94,7 @@ export default function ManageBooks() {
         };
       });
       setBooks(booksData);
-      console.log(booksData);
+      // console.log(booksData);
       // fetching users
       const querySnapshot2 = await getDocs(collection(db, "users"));
       const usersData = querySnapshot2.docs.map((doc) => ({
@@ -110,7 +113,7 @@ export default function ManageBooks() {
     const handler = setTimeout(() => {
       setFilters((prev) => ({ ...prev, search: searchInput }));
       setCurrentPage(1);
-    }, 1000);
+    }, 600);
     return () => clearTimeout(handler);
   }, [searchInput]);
 
@@ -132,7 +135,14 @@ export default function ManageBooks() {
       await updateDoc(bookRef, {
         approval: action,
       });
-      console.log("Updated Firestore successfully");
+      if (action === "approved") {
+        await sendBookNotifications(book);
+        console.log("sendBookNotifications");
+      } else {
+        await sendBookRejectedNotification(book);
+        console.log("sendBookRejectedNotification");
+      }
+      console.log("Updated Firestore successfully", action);
     } catch (err) {
       console.error("Error updating approval:", err);
     }
@@ -154,7 +164,12 @@ export default function ManageBooks() {
     const searchMatch =
       book.title.toLowerCase().includes(searchTerm) ||
       book.author.toLowerCase().includes(searchTerm);
-    return searchMatch;
+
+    const approvalMatch =
+      filters.approval === "all" ||
+      book.approval?.toLowerCase() === filters.approval;
+
+    return searchMatch && approvalMatch;
   });
 
   const totalPages = Math.ceil(filteredBooks.length / booksPerPage);
@@ -168,7 +183,7 @@ export default function ManageBooks() {
     <div>
       <h2 className="mb-4 text-neutral font-semibold">Manage Books</h2>
       {/* Filters */}
-      <div className="flex flex-wrap justify-start items-center gap-3 mb-4">
+      <div className="flex flex-wrap flex-col sm:flex-row justify-start  gap-3 mb-4">
         <div className="bg-white border-secondary border rounded-lg flex gap-2 pr-2 flex-2 min-w-3xs">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -193,14 +208,23 @@ export default function ManageBooks() {
             onChange={(e) => setSearchInput(e.target.value)}
           />
         </div>
+
+        <select
+          value={filters.approval}
+          onChange={(e) =>
+            setFilters((prev) => ({ ...prev, approval: e.target.value }))
+          }
+          className="bg-[#FAF7F0] border border-[#D8D2C2] rounded-lg px-3 py-2 text-sm text-[#4A4947] shadow-sm focus:outline-none focus:ring-2 focus:ring-[#B17457] transition"
+        >
+          <option value="all">All</option>
+          <option value="approved">Approved</option>
+          <option value="pending">Pending</option>
+          <option value="rejected">Rejected</option>
+        </select>
       </div>
 
       {/* Book Cards */}
-      <div
-        className={`flex gap-4 flex-wrap justify-center ${
-          filteredBooks.length > 2 && "lg:justify-between"
-        }`}
-      >
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6 w-fit m-auto">
         {currentBooks.map((book) => {
           const user = users.find((user) => user.id === book.ownerId);
           if (!user) return null;

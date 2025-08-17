@@ -5,28 +5,27 @@ import {
   FaExclamationTriangle,
 } from "react-icons/fa";
 
-export default function TransactionStats({ data }) {
+export default function ResportStats({ data }) {
   const stats = [
     {
-      label: "Total Transactions",
+      label: "Total Reports",
       value: data.total || 0,
       icon: <FaExchangeAlt />,
     },
     {
-      label: "Completed Today",
-      value: data.completed || 0,
+      label: "Resolved",
+      value: data.resolved || 0,
       icon: <FaCheckCircle />,
     },
-    // {
-    //   label: "Issues Flagged",
-    //   value: data.issues || 0,
-    //   icon: <FaExclamationTriangle />,
-    // },
+    {
+      label: "Pending",
+      value: data.pending || 0,
+      icon: <FaExclamationTriangle />,
+    },
   ];
 
   return (
-    // md:grid-cols-3
-    <div className="grid grid-cols-1 sm:grid-cols-2  gap-4 mb-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
       {stats.map((stat, i) => (
         <div
           key={i}

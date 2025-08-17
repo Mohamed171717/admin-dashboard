@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { MdOutlineReportProblem } from "react-icons/md";
+import { MdReportProblem } from "react-icons/md";
 
 export default function Header({ activePage, changeActivePage }) {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -22,10 +24,10 @@ export default function Header({ activePage, changeActivePage }) {
     <div className="text-center">
       <div className="p-3 bg-secondary rounded-2xl mb-4">
         {/* Top bar */}
-        <div className="flex justify-center items-center md:justify-center md:gap-14">
+        <div className="flex justify-center items-center lg:justify-center lg:gap-14">
           {/* Burger Icon - visible only on small screens */}
           <button
-            className="md:hidden"
+            className="lg:hidden"
             onClick={() => setMenuOpen((prev) => !prev)}
             aria-label="Toggle Menu"
           >
@@ -48,9 +50,9 @@ export default function Header({ activePage, changeActivePage }) {
 
         {/* Nav Links */}
         <div
-          className={`flex flex-col md:flex-row md:gap-14 md:justify-center transition-all duration-200 ${
+          className={`flex flex-col lg:flex-row lg:gap-14 lg:justify-center transition-all duration-200 ${
             menuOpen ? "block" : "hidden"
-          } md:flex`}
+          } lg:flex`}
         >
           {navLink(
             1,
@@ -107,6 +109,12 @@ export default function Header({ activePage, changeActivePage }) {
                 d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z"
               />
             </svg>
+          )}
+
+          {navLink(
+            4,
+            "Monitor Reports",
+            activePage === 4 ? <MdReportProblem /> : <MdOutlineReportProblem />
           )}
         </div>
       </div>

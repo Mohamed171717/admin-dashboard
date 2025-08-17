@@ -8,7 +8,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 export default function UserManagement() {
   const [searchInput, setSearchInput] = useState("");
-  const [filters, setFilters] = useState({ search: "" });
+  const [filters, setFilters] = useState({ search: "", role: "all" });
   const [users, setUsers] = useState([]);
   const [books, setBooks] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -61,12 +61,23 @@ export default function UserManagement() {
   // console.log(users);
 
   // filtering by search
+  // const filteredUsers = users.filter((user) => {
+  //   const searchTerm = filters.search.toLowerCase();
+  //   return (
+  //     user.name?.toLowerCase().includes(searchTerm) ||
+  //     user.email?.toLowerCase().includes(searchTerm)
+  //   );
+  // });
   const filteredUsers = users.filter((user) => {
     const searchTerm = filters.search.toLowerCase();
-    return (
+    const matchesSearch =
       user.name?.toLowerCase().includes(searchTerm) ||
-      user.email?.toLowerCase().includes(searchTerm)
-    );
+      user.email?.toLowerCase().includes(searchTerm);
+
+    const matchesRole =
+      filters.role === "all" || user.role?.toLowerCase() === filters.role;
+
+    return matchesSearch && matchesRole;
   });
 
   //pagination values
@@ -79,37 +90,46 @@ export default function UserManagement() {
     <>
       <h2 className="mb-4 text-neutral font-semibold">Manage Users</h2>
       <div className="bg-secondary rounded-2xl p-6 min-h-[470px]">
-        <div className="bg-primary-content rounded-lg mb-4 flex gap-2 pr-2">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="size-5 m-3"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+        <div className="flex gap-4 mb-4 flex-col sm:flex-row">
+          {/* Search */}
+          <div className="bg-primary-content rounded-lg flex gap-2 pr-2 flex-1">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="size-5 m-3"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+              />
+            </svg>
+            <input
+              type="search"
+              className="w-full outline-none"
+              placeholder="search users ..."
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
             />
-          </svg>
+          </div>
 
-          <input
-            type="search"
-            name=""
-            id=""
-            className="w-full outline-none"
-            placeholder="search users ..."
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-          />
+          <select
+            className="bg-[#FAF7F0] border border-[#D8D2C2] rounded-lg px-3 py-2 text-sm text-[#4A4947] shadow-sm focus:outline-none focus:ring-2 focus:ring-[#B17457] transition"
+            value={filters.role}
+            onChange={(e) =>
+              setFilters((prev) => ({ ...prev, role: e.target.value }))
+            }
+          >
+            <option value="all">All Roles</option>
+            <option value="reader">Individual</option>
+            <option value="library">Library</option>
+          </select>
         </div>
-        <div
-          className={`flex gap-4 justify-between flex-wrap sm:justify-center ${
-            currentUsers > 3 && "lg:justify-between"
-          }`}
-        >
+
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6 w-fit m-auto">
           {currentUsers.map((user) => {
             const relatedBooks = books.filter(
               (book) => user.id === book.ownerId
