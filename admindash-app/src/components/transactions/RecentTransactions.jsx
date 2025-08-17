@@ -86,7 +86,7 @@ export default function RecentTransactions({ transactions }) {
 
               return (
                 <tr
-                  key={tx.id}
+                  key={tx.orderId}
                   className="border-t text-sm text-[#4A4947] align-top"
                 >
                   {/* Date & Time */}

@@ -22,7 +22,7 @@ export default function MonitorTransactions() {
   const [pageInfo, setPageInfo] = useState({ firstDoc: null, lastDoc: null });
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [pageCursors, setPageCursors] = useState([]);
+  // const [pageCursors, setPageCursors] = useState([]);
   const [totalTransactions, setTotalTransactions] = useState(0);
 
   const PAGE_SIZE = 10;
@@ -95,11 +95,11 @@ export default function MonitorTransactions() {
 
         setPageInfo({ firstDoc, lastDoc });
 
-        if (direction === "next") {
-          setPageCursors((prev) => [...prev, firstDoc]);
-        } else if (direction === "prev") {
-          setPageCursors((prev) => prev.slice(0, -1));
-        }
+        // if (direction === "next") {
+        //   setPageCursors((prev) => [...prev, firstDoc]);
+        // } else if (direction === "prev") {
+        //   setPageCursors((prev) => prev.slice(0, -1));
+        // }
       }
     });
   };

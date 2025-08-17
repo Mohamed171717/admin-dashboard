@@ -3,6 +3,7 @@ import Header from "../components/Header";
 import UserManagement from "./UserManagement";
 import ManageBooks from "./ManageBooks";
 import MonitorTransactions from "./MonitorTransactions";
+import MonitorReports from "./MonitorReports";
 
 export default function AdminLayout() {
   const [activePage, setActivePage] = useState(1);
@@ -13,8 +14,10 @@ export default function AdminLayout() {
         <UserManagement />
       ) : activePage == 2 ? (
         <ManageBooks />
-      ) : (
+      ) : activePage == 3 ? (
         <MonitorTransactions />
+      ) : (
+        <MonitorReports />
       )}
     </div>
   );
