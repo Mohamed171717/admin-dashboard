@@ -5,6 +5,7 @@ import ReportsTable from "../components/reports/ReportsTable";
 import ReportDetailsModal from "../components/reports/ReportDetailsModal";
 import TransactionStats from "../components/transactions/TransactionStats";
 import ResportStats from "../components/reports/ReportStats";
+import ReportCharts from "../components/reports/ReportsCharts";
 
 export default function MonitorReports() {
   const [reports, setReports] = useState([]);
@@ -111,13 +112,14 @@ export default function MonitorReports() {
   return (
     <div className="pb-4">
       <h2 className="mb-4 text-neutral font-semibold">Monitor Reports</h2>
-      <ResportStats
+      <ReportCharts reports={reports} />
+      {/* <ResportStats
         data={{
           total: reports.length,
           resolved: reports.filter((r) => r.resolved).length,
           pending: reports.filter((r) => !r.resolved).length,
         }}
-      />
+      /> */}
 
       {/* Search and Filters */}
       <div className="flex flex-wrap flex-col sm:flex-row justify-start gap-3 mb-4">
