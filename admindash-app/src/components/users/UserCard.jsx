@@ -66,96 +66,69 @@ export default function UserCard({ user, books, fetchUsers, openModal }) {
   );
 
   return (
-    <div className="border border-gray-200 rounded-lg p-6 min-w-55 max-w-100 bg-white shadow-sm overflow-x-hidden">
-      {/* User Header */}
-      <div className="flex items-center gap-4 mb-4 w-full">
+    <div className="border border-[#D8D2C2] rounded-2xl p-6 bg-[#FAF7F0] shadow-sm transition transform hover:scale-[1.01] hover:shadow-md">
+      {/* Header */}
+      <div className="flex items-center gap-4 mb-4">
         <div className="avatar">
           {!user.photoUrl || user.photoUrl == "/user-default.jpg" ? (
             userDefaultImage
           ) : (
-            <div className="w-12 rounded-full bg-gray-200">
-              <img src={user.photoUrl} alt="" srcSet="" />
+            <div className="w-12 h-12 rounded-full overflow-hidden border border-[#D8D2C2]">
+              <img src={user.photoUrl} alt="" />
             </div>
           )}
         </div>
         <div className="overflow-hidden">
-          <h2 className="text-xl font-semibold text-neutral text-ellipsis whitespace-nowrap">
+          <h2 className="text-lg font-semibold text-[#4A4947] truncate">
             {user.name}
           </h2>
-          <p className="text-neutral text-sm text-ellipsis">{user.email}</p>
+          <p className="text-sm text-[#4A4947]/70 truncate">{user.email}</p>
         </div>
       </div>
 
-      {/* Status Badges */}
-      <div className="flex gap-2 mb-3">
-        <span className="px-2 py-1 text-xs font-medium rounded border border-gray-300 text-neutral bg-secondary">
-          {user.role == "reader" ? "Individual" : "Library"}
+      {/* Role Badge */}
+      <div className="mb-3">
+        <span className="px-2 py-1 text-xs font-medium rounded-lg border border-[#D8D2C2] bg-[#fff] text-[#4A4947]">
+          {user.role === "reader" ? "Individual" : "Library"}
         </span>
       </div>
 
-      {/* Stats Row */}
-      <div className="flex justify-around mb-3">
-        <div className="text-center text-neutral">
-          <p className="text-xs">Books Listed</p>
+      {/* Stats */}
+      <div className="grid grid-cols-3 text-center text-[#4A4947] mb-4">
+        <div>
+          <p className="text-xs">Books</p>
           <p className="font-semibold">{books.length}</p>
         </div>
-        {/* <div className="text-center text-neutral">
-          <p className="text-xs">Trades</p>
-          <p className="font-semibold">128</p>
-        </div> */}
-        <div className="text-center text-neutral">
+        <div>
           <p className="text-xs">Rating</p>
           <p className="font-semibold">{user.averageRating.toFixed(1)}</p>
         </div>
+        <div>
+          <p className="text-xs">Status</p>
+          <p
+            className={`font-semibold ${
+              user.isBanned ? "text-red-600" : "text-green-600"
+            }`}
+          >
+            {user.isBanned ? "Banned" : "Active"}
+          </p>
+        </div>
       </div>
 
-      {/* Action Buttons */}
+      {/* Actions */}
       <div className="space-y-3">
         <button
           onClick={() => openModal(user)}
-          className="w-full flex justify-center items-center gap-1 py-2 px-4 border border-accent text-accent rounded-lg hover:bg-primary-content transition-colors"
+          className="w-full flex justify-center items-center gap-2 py-2 px-4 border border-[#B17457] text-[#B17457] rounded-lg hover:bg-[#B17457]/10 transition"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="size-5"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"
-            />
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-            />
-          </svg>
           More Info
         </button>
-        <button
+        {/* <button
           onClick={() => toggleBanUser(user.id, user.isBanned)}
-          className="w-full flex justify-center gap-1 items-center py-2 px-4 bg-accent text-primary-content rounded-lg hover:brightness-110  transition-colors"
+          className="w-full flex justify-center items-center gap-2 py-2 px-4 bg-[#B17457] text-white rounded-lg hover:bg-[#9c604a] transition"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="size-5"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636"
-            />
-          </svg>
           {user.isBanned ? "Unban Account" : "Ban Account"}
-        </button>
+        </button> */}
       </div>
     </div>
   );

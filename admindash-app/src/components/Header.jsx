@@ -1,28 +1,32 @@
 import { useState } from "react";
-import { MdOutlineReportProblem } from "react-icons/md";
-import { MdReportProblem } from "react-icons/md";
+import { MdOutlineReportProblem, MdReportProblem } from "react-icons/md";
 
 export default function Header({ activePage, changeActivePage }) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const navLink = (pageNum, label, icon) => (
     <button
-      className={`flex gap-1 p-2 items-center ${
-        activePage === pageNum && "text-accent border-b-accent border-b-2"
-      }`}
+      className={`flex gap-2 p-2 items-center transition-colors duration-200
+        text-[#4A4947] hover:text-[#B17457]
+        ${
+          activePage === pageNum
+            ? "text-[#B17457] border-b-2 border-[#B17457]"
+            : ""
+        }
+      `}
       onClick={() => {
         changeActivePage(pageNum);
         setMenuOpen(false);
       }}
     >
       {icon}
-      {label}
+      <span className="text-sm font-medium">{label}</span>
     </button>
   );
 
   return (
     <div className="text-center">
-      <div className="p-3 bg-secondary rounded-2xl mb-4">
+      <div className="p-3 bg-[#D8D2C2] rounded-2xl mb-4 shadow-sm">
         {/* Top bar */}
         <div className="flex justify-center items-center lg:justify-center lg:gap-14">
           {/* Burger Icon - visible only on small screens */}
@@ -37,7 +41,7 @@ export default function Header({ activePage, changeActivePage }) {
               viewBox="0 0 24 24"
               strokeWidth={1.5}
               stroke="currentColor"
-              className="size-6 text-neutral"
+              className="size-6 text-[#4A4947]"
             >
               <path
                 strokeLinecap="round"
@@ -50,16 +54,15 @@ export default function Header({ activePage, changeActivePage }) {
 
         {/* Nav Links */}
         <div
-          className={`flex flex-col lg:flex-row lg:gap-14 lg:justify-center transition-all duration-200 ${
-            menuOpen ? "block" : "hidden"
-          } lg:flex`}
+          className={`flex flex-col lg:flex-row lg:gap-14 lg:justify-center transition-all duration-200 
+            ${menuOpen ? "block" : "hidden"} lg:flex`}
         >
           {navLink(
             1,
             "Manage Users",
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              fill={activePage === 1 ? "currentColor" : "none"}
+              fill={activePage === 1 ? "#B17457" : "none"}
               viewBox="0 0 24 24"
               strokeWidth={1.5}
               stroke="currentColor"
@@ -78,7 +81,7 @@ export default function Header({ activePage, changeActivePage }) {
             "Manage Books",
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              fill={activePage === 2 ? "currentColor" : "none"}
+              fill={activePage === 2 ? "#B17457" : "none"}
               viewBox="0 0 24 24"
               strokeWidth={1.5}
               stroke="currentColor"
@@ -97,7 +100,7 @@ export default function Header({ activePage, changeActivePage }) {
             "Monitor Transactions",
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              fill={activePage === 3 ? "currentColor" : "none"}
+              fill={activePage === 3 ? "#B17457" : "none"}
               viewBox="0 0 24 24"
               strokeWidth={1.5}
               stroke="currentColor"
@@ -114,7 +117,11 @@ export default function Header({ activePage, changeActivePage }) {
           {navLink(
             4,
             "Monitor Reports",
-            activePage === 4 ? <MdReportProblem /> : <MdOutlineReportProblem />
+            activePage === 4 ? (
+              <MdReportProblem className="text-[#B17457]" />
+            ) : (
+              <MdOutlineReportProblem className="text-[#4A4947]" />
+            )
           )}
         </div>
       </div>

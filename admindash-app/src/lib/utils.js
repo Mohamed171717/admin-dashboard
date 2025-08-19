@@ -1,3 +1,5 @@
+import { clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
 import { Timestamp } from "firebase/firestore";
 
 export function formatDate(timestamp) {
@@ -19,4 +21,8 @@ export function formatDate(timestamp) {
     hour: "2-digit",
     minute: "2-digit",
   });
+}
+
+export function cn(...inputs) {
+  return twMerge(clsx(inputs));
 }
