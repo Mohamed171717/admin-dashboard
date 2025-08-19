@@ -12,65 +12,6 @@ import { sendBookNotifications } from "../lib/sendNotifications";
 import { sendBookRejectedNotification } from "../lib/sendOwnerNotif";
 import { BookTable } from "../components/books/BookTable";
 
-// const dummyBooks = [
-//   {
-//     id: 1,
-//     title: "The Art of Programming",
-//     author: "Robert C. Martin",
-//     isbn: "978-0132350884",
-//     image: "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f",
-//     submittedBy: {
-//       name: "John Smith",
-//       email: "john.smith@library.com",
-//     },
-//     source: "Library",
-//     status: "Approved",
-//     date: "2024-01-15",
-//   },
-//   {
-//     id: 2,
-//     title: "Design Patterns",
-//     author: "Erich Gamma",
-//     isbn: "978-0201633610",
-//     image: "https://images.unsplash.com/photo-1581093458791-9c10c8a14f6e",
-//     submittedBy: {
-//       name: "Sarah Johnson",
-//       email: "sarah.j@gmail.com",
-//     },
-//     source: "Individual",
-//     status: "Pending",
-//     date: "2024-01-16",
-//   },
-//   {
-//     id: 3,
-//     title: "Clean Architecture",
-//     author: "Robert C. Martin",
-//     isbn: "978-0134494166",
-//     image: "https://images.unsplash.com/photo-1512820790803-83ca734da794",
-//     submittedBy: {
-//       name: "Michael Brown",
-//       email: "m.brown@library.com",
-//     },
-//     source: "Library",
-//     status: "Rejected",
-//     date: "2024-01-17",
-//   },
-//   {
-//     id: 4,
-//     title: "Refactoring",
-//     author: "Martin Fowler",
-//     isbn: "978-0201485677",
-//     image: "https://images.unsplash.com/photo-1528207776546-365bb710ee93",
-//     submittedBy: {
-//       name: "Emma Green",
-//       email: "emma.green@library.com",
-//     },
-//     source: "Library",
-//     status: "Pending",
-//     date: "2024-01-18",
-//   },
-// ];
-
 export default function ManageBooks() {
   const [viewMode, setViewMode] = useState("grid");
   const [books, setBooks] = useState([]);
@@ -81,10 +22,12 @@ export default function ManageBooks() {
   });
   const [searchInput, setSearchInput] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(true);
   const booksPerPage = 8;
 
   const fetchData = async () => {
     try {
+      setLoading(true);
       // fetching books
       const querySnapshot = await getDocs(collection(db, "books"));
       const booksData = querySnapshot.docs.map((doc) => {
@@ -106,6 +49,8 @@ export default function ManageBooks() {
       setUsers(usersData);
     } catch (error) {
       console.error("Error fetching users:", error);
+    } finally {
+      setLoading(false); // finish loading
     }
   };
 
@@ -225,85 +170,93 @@ export default function ManageBooks() {
         </select>
       </div>
 
-      {/* Book Cards */}
-      <div className="p-2">
-        {/* Header with view toggle */}
-        <div className="flex justify-center items-center mb-4">
-          {/* <h2 className="text-xl font-semibold text-[#4A4947]">
+      {loading ? (
+        <div className="flex justify-center items-center h-64">
+          <div className="w-12 h-12 border-4 border-[#B17457] border-t-transparent border-solid rounded-full animate-spin"></div>
+        </div>
+      ) : (
+        <>
+          {/* Book Cards */}
+          <div className="p-2">
+            {/* Header with view toggle */}
+            <div className="flex justify-center items-center mb-4">
+              {/* <h2 className="text-xl font-semibold text-[#4A4947]">
             Book Management
           </h2> */}
-          <div className="flex gap-2">
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setViewMode("grid")}
+                  className={`px-3 py-1 rounded-lg border ${
+                    viewMode === "grid"
+                      ? "bg-[#B17457] text-white"
+                      : "bg-white text-[#4A4947] border-[#D8D2C2]"
+                  }`}
+                >
+                  Grid
+                </button>
+                <button
+                  onClick={() => setViewMode("table")}
+                  className={`px-3 py-1 rounded-lg border ${
+                    viewMode === "table"
+                      ? "bg-[#B17457] text-white"
+                      : "bg-white text-[#4A4947] border-[#D8D2C2]"
+                  }`}
+                >
+                  Table
+                </button>
+              </div>
+            </div>
+
+            {/* Content */}
+            {viewMode === "grid" ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6 w-fit m-auto">
+                {currentBooks.map((book) => {
+                  const user = users.find((user) => user.id === book.ownerId);
+                  if (!user) return null;
+                  return (
+                    <BookCard
+                      key={book.id}
+                      book={book}
+                      user={user}
+                      changeApproval={changeApproval}
+                      deleteBook={deleteBook}
+                    />
+                  );
+                })}
+              </div>
+            ) : (
+              <BookTable
+                books={currentBooks}
+                changeApproval={changeApproval}
+                deleteBook={deleteBook}
+              />
+            )}
+          </div>
+
+          {/* Pagination */}
+          <div className="mt-8 flex justify-center items-center gap-4">
             <button
-              onClick={() => setViewMode("grid")}
-              className={`px-3 py-1 rounded-lg border ${
-                viewMode === "grid"
-                  ? "bg-[#B17457] text-white"
-                  : "bg-white text-[#4A4947] border-[#D8D2C2]"
-              }`}
+              className="btn btn-xs  rounded-lg py-4 px-3.5 text-sm bg-[#B17457] text-white hover:bg-[#9c604a]"
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
             >
-              Grid
+              <img src="src/assets/h174.svg" alt="" />
             </button>
+
+            <span className="text-sm font-medium text-[#4A4947]">
+              Page {currentPage} of {totalPages}
+            </span>
+
             <button
-              onClick={() => setViewMode("table")}
-              className={`px-3 py-1 rounded-lg border ${
-                viewMode === "table"
-                  ? "bg-[#B17457] text-white"
-                  : "bg-white text-[#4A4947] border-[#D8D2C2]"
-              }`}
+              className="btn btn-xs rounded-lg py-4 px-3.5 text-sm bg-[#B17457] text-white hover:bg-[#9c604a]"
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
             >
-              Table
+              <img src="src/assets/h177.svg" alt="" />
             </button>
           </div>
-        </div>
-
-        {/* Content */}
-        {viewMode === "grid" ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6 w-fit m-auto">
-            {currentBooks.map((book) => {
-              const user = users.find((user) => user.id === book.ownerId);
-              if (!user) return null;
-              return (
-                <BookCard
-                  key={book.id}
-                  book={book}
-                  user={user}
-                  changeApproval={changeApproval}
-                  deleteBook={deleteBook}
-                />
-              );
-            })}
-          </div>
-        ) : (
-          <BookTable
-            books={currentBooks}
-            changeApproval={changeApproval}
-            deleteBook={deleteBook}
-          />
-        )}
-      </div>
-
-      {/* Pagination */}
-      <div className="mt-8 flex justify-center items-center gap-4">
-        <button
-          className="btn btn-xs  rounded-lg py-4 px-3.5 text-sm bg-[#B17457] text-white hover:bg-[#9c604a]"
-          disabled={currentPage === 1}
-          onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-        >
-          <img src="src/assets/h174.svg" alt="" />
-        </button>
-
-        <span className="text-sm font-medium text-[#4A4947]">
-          Page {currentPage} of {totalPages}
-        </span>
-
-        <button
-          className="btn btn-xs rounded-lg py-4 px-3.5 text-sm bg-[#B17457] text-white hover:bg-[#9c604a]"
-          disabled={currentPage === totalPages}
-          onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
-        >
-          <img src="src/assets/h177.svg" alt="" />
-        </button>
-      </div>
+        </>
+      )}
     </div>
   );
 }
