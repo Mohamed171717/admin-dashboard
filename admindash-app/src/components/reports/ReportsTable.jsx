@@ -13,7 +13,7 @@ import { formatDate } from "../../lib/utils";
 
 const ReportsTable = ({ reports, onViewDetails }) => {
   return (
-    <div className="w-full rounded-2xl border border-[#D8D2C2] shadow-sm overflow-hidden">
+    <div className="w-full p-4 rounded-2xl border border-[#D8D2C2] shadow-sm overflow-hidden">
       <Table>
         {/* <TableCaption className="text-[#4A4947] font-medium">
           User Reports Overview
@@ -25,7 +25,7 @@ const ReportsTable = ({ reports, onViewDetails }) => {
             <TableHead>For</TableHead>
             <TableHead>Type</TableHead>
             <TableHead>Status</TableHead>
-            <TableHead className="text-right">Action</TableHead>
+            <TableHead className="text-center">Action</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>

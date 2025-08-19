@@ -186,7 +186,7 @@ export default function ManageBooks() {
       <h2 className="mb-4 text-neutral font-semibold">Manage Books</h2>
       {/* Filters */}
       <div className="flex flex-wrap flex-col sm:flex-row justify-start  gap-3 mb-4">
-        <div className="bg-white border-secondary border rounded-lg flex gap-2 pr-2 flex-2 min-w-3xs">
+        <div className="bg-white border border-[#D8D2C2] shadow-sm rounded-lg flex gap-2 pr-2 flex-2 min-w-3xs">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"

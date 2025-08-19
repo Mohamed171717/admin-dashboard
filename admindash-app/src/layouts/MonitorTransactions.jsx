@@ -15,6 +15,7 @@ import {
   limitToLast,
 } from "firebase/firestore";
 import { db } from "../lib/firebase";
+import TransactionCharts from "@/components/transactions/TransactionCharts";
 
 export default function MonitorTransactions() {
   const [transactions, setTransactions] = useState([]);
@@ -23,7 +24,7 @@ export default function MonitorTransactions() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   // const [pageCursors, setPageCursors] = useState([]);
-  const [totalTransactions, setTotalTransactions] = useState(0);
+  const [totalTransactions, setTotalTransactions] = useState([]);
 
   const PAGE_SIZE = 10;
 
@@ -51,7 +52,7 @@ export default function MonitorTransactions() {
     const snapshot = await getDocs(collection(db, "orders"));
     const totalCount = snapshot.size;
     const totalTransactions = snapshot.docs.map((doc) => doc.data());
-    setTotalTransactions(totalTransactions.length);
+    setTotalTransactions(totalTransactions);
     setTotalPages(Math.ceil(totalCount / PAGE_SIZE));
   };
 
@@ -126,6 +127,7 @@ export default function MonitorTransactions() {
       unsubComplains();
     };
   }, []);
+  console.log(totalTransactions);
 
   return (
     <div>
@@ -133,11 +135,13 @@ export default function MonitorTransactions() {
 
       <TransactionStats
         data={{
-          total: totalTransactions,
+          total: totalTransactions.length,
           completed: transactions.filter((t) => isToday(t.createdAt)).length,
           issues: complains.filter((c) => c.complainType === "book").length,
         }}
       />
+
+      <TransactionCharts transactions={totalTransactions} />
 
       <RecentTransactions transactions={transactions} />
 
