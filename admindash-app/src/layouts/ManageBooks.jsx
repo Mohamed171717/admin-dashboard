@@ -10,6 +10,7 @@ import {
 import { db } from "../lib/firebase";
 import { sendBookNotifications } from "../lib/sendNotifications";
 import { sendBookRejectedNotification } from "../lib/sendOwnerNotif";
+import { BookTable } from "../components/books/BookTable";
 
 // const dummyBooks = [
 //   {
@@ -71,6 +72,7 @@ import { sendBookRejectedNotification } from "../lib/sendOwnerNotif";
 // ];
 
 export default function ManageBooks() {
+  const [viewMode, setViewMode] = useState("grid");
   const [books, setBooks] = useState([]);
   const [users, setUsers] = useState([]);
   const [filters, setFilters] = useState({
@@ -224,20 +226,60 @@ export default function ManageBooks() {
       </div>
 
       {/* Book Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6 w-fit m-auto">
-        {currentBooks.map((book) => {
-          const user = users.find((user) => user.id === book.ownerId);
-          if (!user) return null;
-          return (
-            <BookCard
-              key={book.id}
-              book={book}
-              user={user}
-              changeApproval={changeApproval}
-              deleteBook={deleteBook}
-            />
-          );
-        })}
+      <div className="p-2">
+        {/* Header with view toggle */}
+        <div className="flex justify-center items-center mb-4">
+          {/* <h2 className="text-xl font-semibold text-[#4A4947]">
+            Book Management
+          </h2> */}
+          <div className="flex gap-2">
+            <button
+              onClick={() => setViewMode("grid")}
+              className={`px-3 py-1 rounded-lg border ${
+                viewMode === "grid"
+                  ? "bg-[#B17457] text-white"
+                  : "bg-white text-[#4A4947] border-[#D8D2C2]"
+              }`}
+            >
+              Grid
+            </button>
+            <button
+              onClick={() => setViewMode("table")}
+              className={`px-3 py-1 rounded-lg border ${
+                viewMode === "table"
+                  ? "bg-[#B17457] text-white"
+                  : "bg-white text-[#4A4947] border-[#D8D2C2]"
+              }`}
+            >
+              Table
+            </button>
+          </div>
+        </div>
+
+        {/* Content */}
+        {viewMode === "grid" ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6 w-fit m-auto">
+            {currentBooks.map((book) => {
+              const user = users.find((user) => user.id === book.ownerId);
+              if (!user) return null;
+              return (
+                <BookCard
+                  key={book.id}
+                  book={book}
+                  user={user}
+                  changeApproval={changeApproval}
+                  deleteBook={deleteBook}
+                />
+              );
+            })}
+          </div>
+        ) : (
+          <BookTable
+            books={currentBooks}
+            changeApproval={changeApproval}
+            deleteBook={deleteBook}
+          />
+        )}
       </div>
 
       {/* Pagination */}
