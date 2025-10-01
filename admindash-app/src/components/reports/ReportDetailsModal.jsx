@@ -1,9 +1,10 @@
 import { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { format } from "date-fns";
-import { db } from "../../lib/firebase";
-import { doc, updateDoc } from "firebase/firestore";
+import { db } from "@/lib/firebase";
+import { deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { CheckCircle, Clock, X } from "lucide-react";
+import { toast } from "react-toastify";
 
 export default function ReportDetailsModal({
   report,
@@ -13,14 +14,90 @@ export default function ReportDetailsModal({
 }) {
   const handleResolve = async () => {
     try {
+      if (!report.id) {
+        console.error("Report ID is missing", report);
+        return;
+      }
+      console.log("Attempting to resolve report:", report.id);
       const reportRef = doc(db, "complains", report.id);
       await updateDoc(reportRef, {
         resolved: true,
         resolvedAt: new Date(),
       });
+      console.log("Report resolved successfully");
       onResolve(report.id);
+      toast.success("Report marked as resolved");
     } catch (error) {
       console.error("Error resolving report:", error);
+      toast.error(
+        "Failed to resolve report: " + (error.message || "Unknown error")
+      );
+    }
+  };
+
+  const handleDeletePost = async () => {
+    try {
+      if (!report.postId) {
+        console.error("Post ID is missing", report);
+        toast.error("Post ID is missing");
+        return;
+      }
+
+      const postRef = doc(db, "posts", report.postId);
+      await deleteDoc(postRef);
+
+      toast.success("Post deleted successfully");
+
+      // Mark report as resolved
+      await handleResolve();
+      onClose();
+    } catch (error) {
+      console.error("Error deleting post:", error);
+      toast.error(
+        "Failed to delete post: " + (error.message || "Unknown error")
+      );
+    }
+  };
+
+  const handleDeleteComment = async () => {
+    try {
+      if (!report.postId || !report.commentId) {
+        console.error("Missing IDs:", {
+          postId: report.postId,
+          commentId: report.commentId,
+        });
+        toast.error("Post ID or Comment ID is missing");
+        return;
+      }
+
+      const commentRef = doc(
+        db,
+        "posts",
+        report.postId,
+        "comments",
+        report.commentId
+      );
+      await deleteDoc(commentRef);
+
+      toast.success("Comment deleted successfully");
+
+      // Mark report as resolved
+      await handleResolve();
+      onClose();
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+      toast.error(
+        "Failed to delete comment: " + (error.message || "Unknown error")
+      );
+    }
+  };
+
+  const handleCopyUserEmail = async () => {
+    try {
+      await navigator.clipboard.writeText(report.reportedTo);
+      toast.success("Email copied to clipboard");
+    } catch (error) {
+      console.error("Error copying user email:", error);
     }
   };
 
@@ -141,7 +218,9 @@ export default function ReportDetailsModal({
                   {report.image && (
                     <div>
                       <h4 className="text-sm font-medium text-[#4A4947]/70">
-                        Evidence
+                        {report.complainType === "post"
+                          ? "Post Image"
+                          : "Evidence"}
                       </h4>
                       <div className="mt-2 rounded-lg overflow-hidden border border-[#D8D2C2]">
                         <img
@@ -149,6 +228,75 @@ export default function ReportDetailsModal({
                           alt="Evidence"
                           className="w-full max-h-80 object-cover"
                         />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Content */}
+                  {(report.complainType === "post" ||
+                    report.complainType === "comment") && (
+                    <div>
+                      <h4 className="text-sm font-medium text-[#4A4947]/70">
+                        {report.complainType === "post" ? "Post" : "Comment"}{" "}
+                        Content
+                      </h4>
+                      <p className="mt-2 rounded-lg bg-[#D8D2C2]/30 p-4 text-sm">
+                        {report.content}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Actions */}
+                  {(report.complainType === "post" ||
+                    report.complainType === "comment") && (
+                    <div>
+                      <h4 className="text-sm font-medium text-[#4A4947]/70 mb-2">
+                        Actions
+                      </h4>
+
+                      <div className="grid grid-cols-3 gap-2">
+                        {/* {post link} */}
+                        <div>
+                          <a
+                            href={`https://bookhaven-topaz.vercel.app/community/${report.postId}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <h4 className="rounded-lg bg-[#B17457] px-4 py-2 text-sm font-medium text-white shadow hover:bg-[#9c604a] w-fit">
+                              Post Link
+                            </h4>
+                          </a>
+                        </div>
+
+                        {/* delete post */}
+                        {report.complainType === "post" && (
+                          <button
+                            disabled={report.resolved}
+                            onClick={handleDeletePost}
+                            className="rounded-lg bg-[#B17457] w-fit px-4 py-2 text-sm font-medium text-white shadow hover:bg-[#9c604a] disabled:cursor-not-allowed disabled:bg-[#B17457]/50 disabled:text-white/50"
+                          >
+                            Delete Post
+                          </button>
+                        )}
+
+                        {/* delete Comment */}
+                        {report.complainType === "comment" && (
+                          <button
+                            disabled={report.resolved}
+                            onClick={handleDeleteComment}
+                            className="rounded-lg bg-[#B17457] w-fit px-4 py-2 text-sm font-medium text-white shadow hover:bg-[#9c604a] disabled:cursor-not-allowed disabled:bg-[#B17457]/50 disabled:text-white/50"
+                          >
+                            Delete Comment
+                          </button>
+                        )}
+
+                        {/* copy user email */}
+                        <button
+                          onClick={handleCopyUserEmail}
+                          className="rounded-lg bg-[#B17457] w-fit px-4 py-2 text-sm font-medium text-white shadow hover:bg-[#9c604a]"
+                        >
+                          Copy User Email
+                        </button>
                       </div>
                     </div>
                   )}

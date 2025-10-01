@@ -3,9 +3,11 @@ import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
 import { db } from "../lib/firebase";
 import ReportsTable from "../components/reports/ReportsTable";
 import ReportDetailsModal from "../components/reports/ReportDetailsModal";
-import TransactionStats from "../components/transactions/TransactionStats";
-import ResportStats from "../components/reports/ReportStats";
+// import TransactionStats from "../components/transactions/TransactionStats";
+// import ResportStats from "../components/reports/ReportStats";
 import ReportCharts from "../components/reports/ReportsCharts";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function MonitorReports() {
   const [reports, setReports] = useState([]);
@@ -179,6 +181,8 @@ export default function MonitorReports() {
           onViewDetails={handleViewDetails}
         />
       </div>
+
+      <ToastContainer position="top-right" autoClose={2000} />
 
       {/* Pagination */}
       {totalPages > 1 && (
