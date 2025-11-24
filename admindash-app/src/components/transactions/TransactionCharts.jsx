@@ -153,7 +153,9 @@ export default function TransactionCharts({ transactions = [] }) {
         <CardContent className="h-64">
           {totalCount === 0 ? (
             <div className="h-full flex items-center justify-center text-sm text-[#4A4947]/70">
-              No transactions yet.
+              <div className="flex justify-center items-center h-64">
+                <div className="w-8 h-8 border-4 border-[#B17457] border-t-transparent border-solid rounded-full animate-spin"></div>
+              </div>
             </div>
           ) : (
             <ResponsiveContainer width="100%" height="100%">
@@ -229,7 +231,9 @@ export default function TransactionCharts({ transactions = [] }) {
         <CardContent className="h-64">
           {topGovs.length === 0 ? (
             <div className="h-full flex items-center justify-center text-sm text-[#4A4947]/70">
-              No data.
+              <div className="flex justify-center items-center h-64">
+                <div className="w-8 h-8 border-4 border-[#B17457] border-t-transparent border-solid rounded-full animate-spin"></div>
+              </div>
             </div>
           ) : (
             <ResponsiveContainer width="100%" height="100%">
@@ -287,7 +291,9 @@ export default function TransactionCharts({ transactions = [] }) {
         <CardContent className="h-64">
           {byStatus.length === 0 ? (
             <div className="h-full flex items-center justify-center text-sm text-[#4A4947]/70">
-              No data.
+              <div className="flex justify-center items-center h-64">
+                <div className="w-8 h-8 border-4 border-[#B17457] border-t-transparent border-solid rounded-full animate-spin"></div>
+              </div>
             </div>
           ) : (
             <ResponsiveContainer width="100%" height="100%">

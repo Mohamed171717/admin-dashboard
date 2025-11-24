@@ -1,46 +1,47 @@
 import { getBookOwner } from "@/lib/gettingOwner";
-import { useEffect, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 import { FaTrash } from "react-icons/fa";
 
-export const BookTable = ({ books, changeApproval, deleteBook }) => {
+const BookTable = ({ books, users, changeApproval, deleteBook }) => {
   const statusBadge = {
     approved: "bg-green-500 text-white",
     pending: "bg-yellow-400 text-white",
     rejected: "bg-red-500 text-white",
   };
 
-  const [owners, setOwners] = useState({});
-  const [loading, setLoading] = useState(true);
+  // const [owners, setOwners] = useState({});
+  // const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    setLoading(true);
-    const fetchOwners = async () => {
-      const results = {};
-      for (const book of books) {
-        const owner = await getBookOwner(book.ownerId);
-        if (owner) {
-          results[book.id] = owner;
-        }
-      }
-      setOwners(results);
-    };
+  // useEffect(() => {
+  //   setLoading(true);
+  //   const fetchOwners = async () => {
+  //     const results = {};
+  //     for (const book of books) {
+  //       const owner = await getBookOwner(book.ownerId);
+  //       if (owner) {
+  //         results[book.id] = owner;
+  //       }
+  //     }
+  //     setOwners(results);
+  //   };
 
-    try {
-      fetchOwners();
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setLoading(false);
-    }
-  }, [books]);
+  //   try {
+  //     fetchOwners();
+  //   } catch (err) {
+  //     console.log(err);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // }, [books]);
 
   return (
     <div className="overflow-x-auto bg-white rounded-xl shadow">
-      {loading || !owners ? (
-        <div className="flex justify-center items-center h-64">
-          <div className="w-12 h-12 border-4 border-[#B17457] border-t-transparent border-solid rounded-full animate-spin"></div>
-        </div>
-      ) : (
+      {
+        // loading || !owners ? (
+        //   <div className="flex justify-center items-center h-64">
+        //     <div className="w-12 h-12 border-4 border-[#B17457] border-t-transparent border-solid rounded-full animate-spin"></div>
+        //   </div>
+        // ) :
         <table className="min-w-full text-sm text-left text-[#4A4947]">
           {/* Head */}
           <thead className="bg-[#D8D2C2] text-[#4A4947] text-sm uppercase">
@@ -57,7 +58,7 @@ export const BookTable = ({ books, changeApproval, deleteBook }) => {
           {/* Body */}
           <tbody>
             {books.map((book) => {
-              const owner = owners[book.id];
+              const owner = users.find((user) => user.id === book.ownerId);
               if (!owner) return null;
               return (
                 <tr
@@ -151,7 +152,8 @@ export const BookTable = ({ books, changeApproval, deleteBook }) => {
             })}
           </tbody>
         </table>
-      )}
+      }
     </div>
   );
 };
+export default memo(BookTable);

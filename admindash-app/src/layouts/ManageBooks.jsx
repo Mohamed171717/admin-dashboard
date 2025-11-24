@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import BookCard from "../components/books/BookCard";
 import {
   collection,
@@ -10,7 +10,7 @@ import {
 import { db } from "../lib/firebase";
 import { sendBookNotifications } from "../lib/sendNotifications";
 import { sendBookRejectedNotification } from "../lib/sendOwnerNotif";
-import { BookTable } from "../components/books/BookTable";
+import BookTable from "../components/books/BookTable";
 
 export default function ManageBooks() {
   const [viewMode, setViewMode] = useState("grid");
@@ -22,7 +22,7 @@ export default function ManageBooks() {
   });
   const [searchInput, setSearchInput] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const booksPerPage = 8;
 
   const fetchData = async () => {
@@ -64,38 +64,41 @@ export default function ManageBooks() {
     return () => clearTimeout(handler);
   }, [searchInput]);
 
-  const changeApproval = async (id, action) => {
-    setBooks((prev) =>
-      prev.map((book) =>
-        book.id === id ? { ...book, approval: action } : book
-      )
-    );
+  const changeApproval = useCallback(
+    async (id, action) => {
+      setBooks((prev) =>
+        prev.map((book) =>
+          book.id === id ? { ...book, approval: action } : book
+        )
+      );
 
-    const book = books.find((b) => b.id === id);
-    if (!book || !book.docId) {
-      console.error("Book or docId not found");
-      return;
-    }
-
-    try {
-      const bookRef = doc(db, "books", book.docId);
-      await updateDoc(bookRef, {
-        approval: action,
-      });
-      if (action === "approved") {
-        await sendBookNotifications(book);
-        console.log("sendBookNotifications");
-      } else {
-        await sendBookRejectedNotification(book);
-        console.log("sendBookRejectedNotification");
+      const book = books.find((b) => b.id === id);
+      if (!book || !book.docId) {
+        console.error("Book or docId not found");
+        return;
       }
-      console.log("Updated Firestore successfully", action);
-    } catch (err) {
-      console.error("Error updating approval:", err);
-    }
-  };
 
-  const deleteBook = async (docId) => {
+      try {
+        const bookRef = doc(db, "books", book.docId);
+        await updateDoc(bookRef, {
+          approval: action,
+        });
+        if (action === "approved") {
+          await sendBookNotifications(book);
+          console.log("sendBookNotifications");
+        } else {
+          await sendBookRejectedNotification(book);
+          console.log("sendBookRejectedNotification");
+        }
+        console.log("Updated Firestore successfully", action);
+      } catch (err) {
+        console.error("Error updating approval:", err);
+      }
+    },
+    [books]
+  );
+
+  const deleteBook = useCallback(async (docId) => {
     try {
       await deleteDoc(doc(db, "books", docId));
       console.log("Book deleted successfully");
@@ -104,7 +107,7 @@ export default function ManageBooks() {
     } catch (error) {
       console.error("Error deleting book:", error);
     }
-  };
+  }, []);
 
   const filteredBooks = books.filter((book) => {
     const searchTerm = filters.search.toLowerCase();
@@ -227,6 +230,7 @@ export default function ManageBooks() {
             ) : (
               <BookTable
                 books={currentBooks}
+                users={users}
                 changeApproval={changeApproval}
                 deleteBook={deleteBook}
               />
